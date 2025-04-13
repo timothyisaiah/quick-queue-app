@@ -2,7 +2,6 @@ import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { authConfig } from '@/auth.config';
 
-console.log('✅ [...nextauth] API route loaded');
 
 export const authOptions = {
   providers: [
@@ -13,7 +12,6 @@ export const authOptions = {
         password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials) {
-        console.log('🔐 Authorize function called with:', credentials);
 
         try {
           const res = await fetch('http://localhost:3001/auth/login', {
@@ -28,11 +26,9 @@ export const authOptions = {
           const data = await res.json();
 
           if (!res.ok) {
-            console.error('❌ Login failed:', data);
             return null;
           }
 
-          console.log('✅ Login successful:', data.user);
 
           return {
             id: data.user.id,
@@ -41,7 +37,6 @@ export const authOptions = {
             accessToken: data.access_token,
           };
         } catch (error) {
-          console.error('❌ Authorize error:', error);
           return null;
         }
       },
@@ -53,20 +48,22 @@ export const authOptions = {
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        console.log('💾 JWT callback - storing user:', user);
-        token.user = {
-          id: user.id,
-          email: user.email,
-          role: user.role,
-        };
-        token.accessToken = user.accessToken;
+        token.id = user.id;
+        token.email = user.email;
+        token.role = user.role;
+        token.accessToken = user.accessToken; // <-- this must come from user
+      } else {
+        console.log('💾 JWT callback - no user, using existing token:', token);
       }
       return token;
     },
     async session({ session, token }) {
-      console.log('📦 Session callback - returning session');
-      session.user = token.user;
-      session.accessToken = token.accessToken;
+      if (token) {
+        session.user.id = token.id;
+        session.user.email = token.email;
+        session.user.role = token.role;
+        session.user.accessToken = token.accessToken;
+      }
       return session;
     },
   },
@@ -80,7 +77,7 @@ export const authOptions = {
 
 // export { handler as GET, handler as POST };
 
-const { handlers } = NextAuth(authConfig);
+const { handlers } = NextAuth(authOptions);
 
 export const GET = handlers.GET;
 export const POST = handlers.POST;
