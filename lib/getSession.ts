@@ -1,10 +1,12 @@
+import { API_BASE_URL } from '@/lib/utils/api';
+
 export async function getSession() {
     const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
 
     if (!token) return null;
   
     try {
-      const res = await fetch('http://localhost:3001/auth/session', {
+      const res = await fetch(`${API_BASE_URL}/auth/session`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

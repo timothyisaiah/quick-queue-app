@@ -1,6 +1,7 @@
 import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { authConfig } from '@/auth.config';
+import { API_BASE_URL } from '@/lib/utils/api';
 
 
 export const authOptions = {
@@ -14,7 +15,7 @@ export const authOptions = {
       async authorize(credentials) {
 
         try {
-          const res = await fetch('http://localhost:3001/auth/login', {
+          const res = await fetch(`${API_BASE_URL}/auth/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({

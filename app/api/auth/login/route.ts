@@ -1,12 +1,13 @@
 import { NextResponse } from 'next/server'; 
 import axios from 'axios';
 import { cookies } from 'next/headers';
+import { API_BASE_URL } from '@/lib/utils/api';
 
 export async function POST(request: Request) {
   const { email, password } = await request.json();
 
   try {
-    const response = await axios.post('http://localhost:3001/auth/login', {
+    const response = await axios.post(`${API_BASE_URL}/auth/login`, {
       email,
       password,
     });

@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import { toast } from 'sonner';
+import { API_BASE_URL } from '@/lib/utils/api';
 
 export function useAvailability(token?: string) {
   const [availabilities, setAvailabilities] = useState([]);
@@ -11,7 +12,7 @@ export function useAvailability(token?: string) {
     if (!token) return;
     setLoading(true);
     try {
-      const res = await fetch('http://localhost:3001/availability', {
+      const res = await fetch(`${API_BASE_URL}/availability`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -43,7 +44,7 @@ export function useAvailability(token?: string) {
         end: endDate.toISOString(),
       };
 
-      const res = await fetch('http://localhost:3001/availability', {
+      const res = await fetch(`${API_BASE_URL}/availability`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -66,7 +67,7 @@ export function useAvailability(token?: string) {
     async (id: string) => {
       if (!token) throw new Error('No token provided');
       try{
-      await fetch(`http://localhost:3001/availability/${id}`, {
+      await fetch(`${API_BASE_URL}/availability/${id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` },
       });

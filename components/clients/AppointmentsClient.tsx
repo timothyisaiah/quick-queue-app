@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import AppointmentList from "@/components/clients/AppointmentList";
 import { toast } from "sonner";
+import { API_BASE_URL } from '@/lib/utils/api';
 
 type Appointment = {
   id: number;
@@ -22,7 +23,7 @@ export default function AppointmentsClient() {
       if (!session?.user?.accessToken) return;
 
       try {
-        const res = await fetch("http://localhost:3001/appointments", {
+        const res = await fetch(`${API_BASE_URL}/appointments`, {
           headers: {
             Authorization: `Bearer ${session.user.accessToken}`,
           },
